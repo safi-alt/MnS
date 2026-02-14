@@ -635,14 +635,16 @@ h3 {
 }
 
 /* ===== Hidden YouTube player ===== */
-#yt-player {
-  position: fixed !important;
-  top: -9999px !important;
-  left: -9999px !important;
-  width: 1px !important;
-  height: 1px !important;
-  opacity: 0 !important;
-  pointer-events: none !important;
+#yt-player,
+#yt-player iframe {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: 280px;
+  height: 160px;
+  z-index: -1;
+  clip-path: inset(50%);
+  overflow: hidden;
 }
 
 /* ===== Music player widget ===== */

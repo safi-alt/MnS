@@ -512,27 +512,39 @@ let ytPlayer = null;
 let musicPlaying = false;
 let hasUnmuted = false;
 
+const SONG_ID = "bhoybya39QU"; // Dave ft. Tems – Raindance (Lyrics)
+const SONG_ALT = "suMbSVepWvs"; // Alternate lyrics video
+
 // Called automatically by the YouTube IFrame API script
 window.onYouTubeIframeAPIReady = function () {
   ytPlayer = new YT.Player("yt-player", {
-    width: "1",
-    height: "1",
-    videoId: "SOJpE1KMUbo", // Dave ft. Tems – Raindance
+    width: "280",
+    height: "160",
+    videoId: SONG_ID,
     playerVars: {
-      autoplay: 1, // start immediately
+      autoplay: 1,
       controls: 0,
+      disablekb: 1,
+      fs: 0,
       loop: 1,
-      playlist: "SOJpE1KMUbo",
-      start: 55, // jump to the famous chorus
+      playlist: SONG_ID,
+      start: 55,
+      modestbranding: 1,
+      rel: 0,
     },
     events: {
       onReady: function (event) {
-        // Autoplay muted (browsers allow this)
         event.target.mute();
         event.target.playVideo();
         vinyl.classList.add("spinning");
         musicStatus.textContent = "♪";
         musicPlaying = true;
+      },
+      onError: function () {
+        // Fallback to alternate video if primary fails
+        if (ytPlayer && ytPlayer.loadVideoById) {
+          ytPlayer.loadVideoById({ videoId: SONG_ALT, startSeconds: 55 });
+        }
       },
     },
   });
@@ -543,7 +555,7 @@ function tryUnmute() {
   if (hasUnmuted) return;
   if (ytPlayer && typeof ytPlayer.unMute === "function") {
     ytPlayer.unMute();
-    ytPlayer.setVolume(80);
+    ytPlayer.setVolume(85);
     hasUnmuted = true;
   }
 }
@@ -551,8 +563,10 @@ document.addEventListener("click", tryUnmute, { once: false });
 document.addEventListener("touchstart", tryUnmute, { once: false });
 
 // Toggle play/pause with the music button
-musicBtn.addEventListener("click", () => {
+musicBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
   if (!ytPlayer || typeof ytPlayer.playVideo !== "function") return;
+  tryUnmute();
 
   if (musicPlaying) {
     ytPlayer.pauseVideo();
