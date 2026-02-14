@@ -511,26 +511,24 @@ const musicStatus = document.getElementById("music-status");
 const song = document.getElementById("song");
 let musicPlaying = false;
 
-// Play the famous "rock on it" section — start at 2:20, loop back at 3:30
-const SONG_START = 140; // 2:20
-const SONG_END = 210; // 3:30
+// Play from 2:50 to end, then loop back to 2:50
+const SONG_START = 170; // 2:50
 
 // Seek to the right starting point once audio is loaded
 song.addEventListener("loadedmetadata", () => {
   song.currentTime = SONG_START;
 });
 
-// When playback reaches the end section, loop back to start section
-song.addEventListener("timeupdate", () => {
-  if (song.currentTime >= SONG_END || song.currentTime < SONG_START) {
-    song.currentTime = SONG_START;
-  }
+// When the song ends, loop back to 2:50
+song.addEventListener("ended", () => {
+  song.currentTime = SONG_START;
+  song.play();
 });
 
 function startMusic() {
   if (musicPlaying) return;
   // Ensure we start from the right spot
-  if (song.currentTime < SONG_START || song.currentTime >= SONG_END) {
+  if (song.currentTime < SONG_START) {
     song.currentTime = SONG_START;
   }
   // play() must be called directly in the user gesture — no load() before it
@@ -561,7 +559,7 @@ musicBtn.addEventListener("click", () => {
     musicStatus.textContent = "▶";
     musicPlaying = false;
   } else {
-    if (song.currentTime < SONG_START || song.currentTime >= SONG_END) {
+    if (song.currentTime < SONG_START) {
       song.currentTime = SONG_START;
     }
     song
