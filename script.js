@@ -504,79 +504,73 @@ window.addEventListener("resize", sizeSparkle);
 sizeSparkle();
 sparkleLoop();
 
-// ─── Music player (YouTube IFrame API) ─────────────────────
+// ─── Music player (local audio) ─────────────────────────────
 const musicBtn = document.getElementById("music-btn");
 const vinyl = document.getElementById("vinyl");
 const musicStatus = document.getElementById("music-status");
-let ytPlayer = null;
+const song = document.getElementById("song");
 let musicPlaying = false;
-let hasUnmuted = false;
 
-const SONG_ID = "bhoybya39QU"; // Dave ft. Tems – Raindance (Lyrics)
-const SONG_ALT = "suMbSVepWvs"; // Alternate lyrics video
+// Play the famous "rock on it" section — start at 2:20, loop back at 3:30
+const SONG_START = 140; // 2:20
+const SONG_END = 210; // 3:30
 
-// Called automatically by the YouTube IFrame API script
-window.onYouTubeIframeAPIReady = function () {
-  ytPlayer = new YT.Player("yt-player", {
-    width: "280",
-    height: "160",
-    videoId: SONG_ID,
-    playerVars: {
-      autoplay: 1,
-      controls: 0,
-      disablekb: 1,
-      fs: 0,
-      loop: 1,
-      playlist: SONG_ID,
-      start: 55,
-      modestbranding: 1,
-      rel: 0,
-    },
-    events: {
-      onReady: function (event) {
-        event.target.mute();
-        event.target.playVideo();
-        vinyl.classList.add("spinning");
-        musicStatus.textContent = "♪";
-        musicPlaying = true;
-      },
-      onError: function () {
-        // Fallback to alternate video if primary fails
-        if (ytPlayer && ytPlayer.loadVideoById) {
-          ytPlayer.loadVideoById({ videoId: SONG_ALT, startSeconds: 55 });
-        }
-      },
-    },
-  });
-};
+// Seek to the right starting point once audio is loaded
+song.addEventListener("loadedmetadata", () => {
+  song.currentTime = SONG_START;
+});
 
-// Unmute on first user interaction (click/tap anywhere)
-function tryUnmute() {
-  if (hasUnmuted) return;
-  if (ytPlayer && typeof ytPlayer.unMute === "function") {
-    ytPlayer.unMute();
-    ytPlayer.setVolume(85);
-    hasUnmuted = true;
+// When playback reaches the end section, loop back to start section
+song.addEventListener("timeupdate", () => {
+  if (song.currentTime >= SONG_END || song.currentTime < SONG_START) {
+    song.currentTime = SONG_START;
   }
+});
+
+function startMusic() {
+  if (musicPlaying) return;
+  // Ensure we start from the right spot
+  if (song.currentTime < SONG_START || song.currentTime >= SONG_END) {
+    song.currentTime = SONG_START;
+  }
+  // play() must be called directly in the user gesture — no load() before it
+  song
+    .play()
+    .then(() => {
+      musicPlaying = true;
+      vinyl.classList.add("spinning");
+      musicStatus.textContent = "♪";
+    })
+    .catch(() => {});
 }
-document.addEventListener("click", tryUnmute, { once: false });
-document.addEventListener("touchstart", tryUnmute, { once: false });
 
-// Toggle play/pause with the music button
-musicBtn.addEventListener("click", (e) => {
-  e.stopPropagation();
-  if (!ytPlayer || typeof ytPlayer.playVideo !== "function") return;
-  tryUnmute();
+// Start music on ANY click/tap anywhere on the page
+document.addEventListener("click", startMusic);
+document.addEventListener("touchstart", startMusic);
 
+// Also explicitly start when a puzzle tile is tapped (most reliable)
+tiles.forEach((btn) => {
+  btn.addEventListener("click", startMusic);
+});
+
+// Toggle play/pause with the dedicated music button
+musicBtn.addEventListener("click", () => {
   if (musicPlaying) {
-    ytPlayer.pauseVideo();
+    song.pause();
     vinyl.classList.remove("spinning");
     musicStatus.textContent = "▶";
     musicPlaying = false;
   } else {
-    ytPlayer.playVideo();
-    vinyl.classList.add("spinning");
-    musicStatus.textContent = "♪";
-    musicPlaying = true;
+    if (song.currentTime < SONG_START || song.currentTime >= SONG_END) {
+      song.currentTime = SONG_START;
+    }
+    song
+      .play()
+      .then(() => {
+        vinyl.classList.add("spinning");
+        musicStatus.textContent = "♪";
+        musicPlaying = true;
+      })
+      .catch(() => {});
   }
 });
