@@ -132,9 +132,16 @@ function startHeartFill() {
 
   // Retro-warm dot colors
   const colors = [
-    "#cc1133", "#dd2244", "#b8293d", "#e83850",
-    "#a02038", "#d44060", "#c43050", "#ee5566",
-    "#993322", "#bb4455",
+    "#cc1133",
+    "#dd2244",
+    "#b8293d",
+    "#e83850",
+    "#a02038",
+    "#d44060",
+    "#c43050",
+    "#ee5566",
+    "#993322",
+    "#bb4455",
   ];
 
   // Offscreen hit-test
@@ -154,7 +161,8 @@ function startHeartFill() {
     const y = Math.random() * H;
     if (oCtx.isPointInPath(x * dpr, y * dpr)) {
       dots.push({
-        x, y,
+        x,
+        y,
         r: 1.6 + Math.random() * 2.4,
         color: colors[Math.floor(Math.random() * colors.length)],
       });
@@ -239,6 +247,8 @@ letterModal.addEventListener("click", (e) => {
 });
 
 function closeModalFn() {
+  // Blur to avoid aria-hidden focus warning
+  if (document.activeElement) document.activeElement.blur();
   letterModal.classList.remove("open");
   letterModal.setAttribute("aria-hidden", "true");
 }
@@ -266,9 +276,21 @@ function buildTicker() {
   ticker.innerHTML = items.map((r) => `<span>${r}</span>`).join("");
 }
 
-// ─── Heart + envelope burst effect ──────────────────────────
+// ─── Heart + envelope + teddy + flower burst effect ─────────
 function burstHearts(n = 24) {
-  const emojis = ["❤️", "💖", "💕", "💌", "💗", "✉️", "♥"];
+  const emojis = [
+    "❤️",
+    "💖",
+    "💕",
+    "💌",
+    "💗",
+    "♥",
+    "🧸",
+    "🌹",
+    "🌸",
+    "💐",
+    "🌺",
+  ];
   for (let i = 0; i < n; i++) {
     const span = document.createElement("span");
     span.className = "burst";
@@ -293,15 +315,35 @@ function sizeBg() {
 }
 
 function spawnFloat() {
-  const isEnvelope = Math.random() < 0.3; // 30% envelopes
+  // Distribution: 35% hearts, 20% envelopes, 20% teddy bears, 25% flowers
+  const roll = Math.random();
+  let type, emoji;
+  if (roll < 0.35) {
+    type = "heart";
+  } else if (roll < 0.55) {
+    type = "env";
+  } else if (roll < 0.75) {
+    type = "emoji";
+    emoji = "🧸";
+  } else {
+    type = "emoji";
+    const flowers = ["🌹", "🌸", "🌺", "💐"];
+    emoji = flowers[Math.floor(Math.random() * flowers.length)];
+  }
   floats.push({
     x: Math.random() * bgCanvas.width,
     y: bgCanvas.height + 30,
-    s: isEnvelope ? 12 + Math.random() * 10 : 8 + Math.random() * 14,
-    vy: 0.3 + Math.random() * 0.85,
+    s:
+      type === "emoji"
+        ? 14 + Math.random() * 10
+        : type === "env"
+        ? 12 + Math.random() * 10
+        : 8 + Math.random() * 14,
+    vy: 0.25 + Math.random() * 0.8,
     vx: (Math.random() - 0.5) * 0.6,
-    a: 0.12 + Math.random() * 0.28,
-    type: isEnvelope ? "env" : "heart",
+    a: 0.15 + Math.random() * 0.3,
+    type,
+    emoji,
     wobble: Math.random() * Math.PI * 2,
   });
 }
@@ -360,9 +402,19 @@ function drawSmallEnvelope(x, y, size, alpha) {
   bgCtx.restore();
 }
 
+function drawFloatingEmoji(x, y, size, alpha, emoji) {
+  bgCtx.save();
+  bgCtx.globalAlpha = alpha;
+  bgCtx.font = `${size}px serif`;
+  bgCtx.textAlign = "center";
+  bgCtx.textBaseline = "middle";
+  bgCtx.fillText(emoji, x, y);
+  bgCtx.restore();
+}
+
 function bgLoop() {
   bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
-  if (Math.random() < 0.3 && floats.length < 70) spawnFloat();
+  if (Math.random() < 0.32 && floats.length < 80) spawnFloat();
 
   floats.forEach((f) => {
     f.y -= f.vy;
@@ -371,6 +423,8 @@ function bgLoop() {
 
     if (f.type === "env") {
       drawSmallEnvelope(f.x, f.y, f.s, f.a);
+    } else if (f.type === "emoji") {
+      drawFloatingEmoji(f.x, f.y, f.s, f.a, f.emoji);
     } else {
       drawSmallHeart(f.x, f.y, f.s, f.a);
     }
@@ -438,9 +492,7 @@ function sparkleLoop() {
 
     const alpha = s.life * 0.8;
     spCtx.fillStyle =
-      s.hue === 0
-        ? `rgba(255,140,160,${alpha})`
-        : `rgba(220,180,100,${alpha})`;
+      s.hue === 0 ? `rgba(255,140,160,${alpha})` : `rgba(220,180,100,${alpha})`;
     spCtx.fill();
   });
 
@@ -451,3 +503,66 @@ function sparkleLoop() {
 window.addEventListener("resize", sizeSparkle);
 sizeSparkle();
 sparkleLoop();
+
+// ─── Music player (YouTube IFrame API) ─────────────────────
+const musicBtn = document.getElementById("music-btn");
+const vinyl = document.getElementById("vinyl");
+const musicStatus = document.getElementById("music-status");
+let ytPlayer = null;
+let musicPlaying = false;
+let hasUnmuted = false;
+
+// Called automatically by the YouTube IFrame API script
+window.onYouTubeIframeAPIReady = function () {
+  ytPlayer = new YT.Player("yt-player", {
+    width: "1",
+    height: "1",
+    videoId: "SOJpE1KMUbo", // Dave ft. Tems – Raindance
+    playerVars: {
+      autoplay: 1, // start immediately
+      controls: 0,
+      loop: 1,
+      playlist: "SOJpE1KMUbo",
+      start: 55, // jump to the famous chorus
+    },
+    events: {
+      onReady: function (event) {
+        // Autoplay muted (browsers allow this)
+        event.target.mute();
+        event.target.playVideo();
+        vinyl.classList.add("spinning");
+        musicStatus.textContent = "♪";
+        musicPlaying = true;
+      },
+    },
+  });
+};
+
+// Unmute on first user interaction (click/tap anywhere)
+function tryUnmute() {
+  if (hasUnmuted) return;
+  if (ytPlayer && typeof ytPlayer.unMute === "function") {
+    ytPlayer.unMute();
+    ytPlayer.setVolume(80);
+    hasUnmuted = true;
+  }
+}
+document.addEventListener("click", tryUnmute, { once: false });
+document.addEventListener("touchstart", tryUnmute, { once: false });
+
+// Toggle play/pause with the music button
+musicBtn.addEventListener("click", () => {
+  if (!ytPlayer || typeof ytPlayer.playVideo !== "function") return;
+
+  if (musicPlaying) {
+    ytPlayer.pauseVideo();
+    vinyl.classList.remove("spinning");
+    musicStatus.textContent = "▶";
+    musicPlaying = false;
+  } else {
+    ytPlayer.playVideo();
+    vinyl.classList.add("spinning");
+    musicStatus.textContent = "♪";
+    musicPlaying = true;
+  }
+});

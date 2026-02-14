@@ -1,11 +1,3 @@
-# Valentine Surprise App
-
-A GitHub Pages-ready Valentine's Day web app with:
-
-- floating heart animations
-- a mini puzzle to unlock the surprise
-- a romantic reveal message + love letter modal
-
 ## Run locally
 
 Open `index.html` in your browser.

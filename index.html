@@ -139,6 +139,22 @@
       </div>
     </section>
 
+    <!-- Music player widget -->
+    <div class="music-widget" id="music-widget">
+      <button class="music-btn" id="music-btn" aria-label="Play music">
+        <span class="vinyl" id="vinyl">
+          <span class="vinyl-label">&#9829;</span>
+        </span>
+        <span class="music-status" id="music-status">Play</span>
+      </button>
+      <span class="music-title">Raindance — Dave ft. Tems</span>
+    </div>
+
+    <!-- Hidden YouTube player -->
+    <div id="yt-player" style="position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;"></div>
+
     <script src="script.js"></script>
+    <!-- YouTube IFrame API -->
+    <script src="https://www.youtube.com/iframe_api"></script>
   </body>
 </html>
