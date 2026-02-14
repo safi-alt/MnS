@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>For You - Happy Valentine's Day</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600;700&family=Special+Elite&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <!-- SVG grain filter -->
+    <svg style="display: none">
+      <filter id="grain">
+        <feTurbulence
+          type="fractalNoise"
+          baseFrequency="0.55"
+          numOctaves="3"
+          stitchTiles="stitch"
+        />
+      </filter>
+    </svg>
+  </head>
+  <body>
+    <!-- Film grain overlay -->
+    <div class="grain" aria-hidden="true"></div>
+
+    <!-- Floating hearts + envelopes background -->
+    <canvas id="bg-canvas" aria-hidden="true"></canvas>
+
+    <!-- Sparkle cursor trail canvas -->
+    <canvas id="sparkle-canvas" aria-hidden="true"></canvas>
+
+    <!-- ========== PHASE 1: PUZZLE ========== -->
+    <section id="phase-puzzle" class="phase active">
+      <div class="card vintage-card">
+        <div class="stamp" aria-hidden="true">
+          <span class="stamp-heart">&#9829;</span>
+          <span class="stamp-text">2026</span>
+        </div>
+        <span class="tag">A little challenge for you</span>
+        <h1>Unlock My Heart</h1>
+        <p class="desc">
+          Tap the letters in the right order to spell the magic word and unlock
+          what's inside.
+        </p>
+
+        <div class="slots" id="slots">
+          <span class="slot"></span>
+          <span class="slot"></span>
+          <span class="slot"></span>
+          <span class="slot"></span>
+        </div>
+
+        <div class="tiles" id="tiles">
+          <button class="tile" data-letter="L">L</button>
+          <button class="tile" data-letter="O">O</button>
+          <button class="tile" data-letter="V">V</button>
+          <button class="tile" data-letter="E">E</button>
+          <button class="tile" data-letter="X">X</button>
+          <button class="tile" data-letter="U">U</button>
+        </div>
+
+        <div class="actions">
+          <button id="clear-btn" class="btn outline">Clear</button>
+          <button id="submit-btn" class="btn primary">Unlock</button>
+        </div>
+
+        <p id="feedback" class="feedback" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <!-- ========== PHASE 1.5: ENVELOPE OPEN ========== -->
+    <section id="phase-envelope" class="phase">
+      <div class="envelope-scene">
+        <div class="envelope" id="envelope">
+          <div class="env-back"></div>
+          <div class="env-letter">
+            <p>Keep going...</p>
+          </div>
+          <div class="env-flap"></div>
+          <div class="env-front"></div>
+        </div>
+        <p class="env-hint">You unlocked the envelope!</p>
+      </div>
+    </section>
+
+    <!-- ========== PHASE 2: HEART FILL ========== -->
+    <section id="phase-heart" class="phase">
+      <div class="heart-stage">
+        <canvas id="heart-canvas"></canvas>
+        <p class="fill-label" id="fill-label">Filling with love...</p>
+      </div>
+    </section>
+
+    <!-- ========== PHASE 3: MESSAGE ========== -->
+    <section id="phase-message" class="phase">
+      <div class="card vintage-card msg-card">
+        <div class="stamp" aria-hidden="true">
+          <span class="stamp-heart">&#9829;</span>
+          <span class="stamp-text">XOXO</span>
+        </div>
+        <span class="tag">You did it!</span>
+        <h2>Happy Valentine's Day</h2>
+        <p class="love-text" id="love-text"></p>
+        <button id="letter-btn" class="btn primary">Open My Love Letter</button>
+      </div>
+
+      <!-- Reasons ticker -->
+      <div class="ticker-wrap" aria-hidden="true">
+        <div class="ticker" id="ticker"></div>
+      </div>
+
+      <!-- Love letter modal -->
+      <div id="letter-modal" class="modal" aria-hidden="true">
+        <div class="modal-body vintage-letter" role="dialog" aria-modal="true">
+          <div class="wax-seal" aria-hidden="true">&#9829;</div>
+          <button id="close-modal" class="modal-close" aria-label="Close">&times;</button>
+          <h3>My Dearest Love,</h3>
+          <p>
+            Every single day I wake up grateful that you exist. You turned my
+            ordinary world into something magical, and I will never stop being
+            amazed by you.
+          </p>
+          <p>
+            Thank you for being my comfort, my laughter, and my favourite
+            reason to smile. No words could ever be enough, but here are a
+            few: I love you endlessly.
+          </p>
+          <p>Happy Valentine's Day, sweetheart.</p>
+          <p class="sign">Forever yours &hearts;</p>
+          <div class="postmark" aria-hidden="true">
+            <span>Valentine's Day</span>
+            <span>Feb 14, 2026</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script src="script.js"></script>
+  </body>
+</html>

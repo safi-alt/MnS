@@ -1,0 +1,670 @@
+/* ============================================================
+   Retro Valentine – warm vintage palette + grain + envelopes
+   ============================================================ */
+
+/* ===== Reset ===== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ===== Warm retro palette ===== */
+:root {
+  --bg-deep: #1a080c;
+  --bg-mid: #3a1220;
+  --bg-glow: #5e1a2e;
+  --cream: #ffeedd;
+  --gold: #d4a055;
+  --gold-dim: rgba(212, 160, 85, 0.25);
+  --dusty-rose: #c45c6a;
+  --blush: #f5c6c0;
+  --vintage-red: #b8293d;
+  --deep-red: #8c1028;
+  --card-bg: rgba(255, 235, 215, 0.07);
+  --card-border: rgba(212, 160, 85, 0.3);
+  --shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+}
+
+body {
+  font-family: "Poppins", system-ui, sans-serif;
+  color: var(--cream);
+  background: radial-gradient(
+    ellipse at 50% 15%,
+    var(--bg-glow) 0%,
+    var(--bg-mid) 40%,
+    var(--bg-deep) 100%
+  );
+}
+
+/* ===== Film grain overlay ===== */
+.grain {
+  position: fixed;
+  inset: -50%;
+  width: 200%;
+  height: 200%;
+  z-index: 50;
+  pointer-events: none;
+  opacity: 0.032;
+  filter: url(#grain);
+  background: #fff;
+  animation: grain-drift 8s steps(4) infinite;
+}
+
+@keyframes grain-drift {
+  0% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(-2%, 3%);
+  }
+  50% {
+    transform: translate(1%, -2%);
+  }
+  75% {
+    transform: translate(3%, 1%);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+/* ===== Background & sparkle canvases ===== */
+#bg-canvas,
+#sparkle-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+#bg-canvas {
+  z-index: 0;
+}
+
+#sparkle-canvas {
+  z-index: 2;
+}
+
+/* ===== Phase system ===== */
+.phase {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  z-index: 1;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 650ms ease, visibility 650ms;
+}
+
+.phase.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* ===== Vintage card ===== */
+.vintage-card {
+  position: relative;
+  width: min(640px, 100%);
+  padding: 40px 30px 34px;
+  text-align: center;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 22px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: var(--shadow), inset 0 0 0 1px rgba(255, 240, 220, 0.04);
+}
+
+/* Inner vintage double border */
+.vintage-card::before {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border: 1px dashed var(--gold-dim);
+  border-radius: 16px;
+  pointer-events: none;
+}
+
+/* ===== Postage stamp decoration ===== */
+.stamp {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  width: 52px;
+  height: 62px;
+  background: linear-gradient(145deg, #f2dcc8, #e8c9ac);
+  border-radius: 3px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  box-shadow: 1px 2px 6px rgba(0, 0, 0, 0.35);
+  /* Perforated edge look */
+  outline: 3px dashed rgba(30, 10, 15, 0.35);
+  outline-offset: 2px;
+}
+
+.stamp-heart {
+  font-size: 1.4rem;
+  color: var(--vintage-red);
+  line-height: 1;
+}
+
+.stamp-text {
+  font-family: "Special Elite", monospace;
+  font-size: 0.55rem;
+  color: #5a3020;
+  letter-spacing: 0.06em;
+}
+
+/* ===== Typography ===== */
+.tag {
+  display: inline-block;
+  font-family: "Special Elite", monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 10px;
+}
+
+h1,
+h2 {
+  font-family: "Great Vibes", cursive;
+  font-size: clamp(2.4rem, 7vw, 4.2rem);
+  line-height: 1.15;
+  color: var(--blush);
+  margin-bottom: 6px;
+  text-shadow: 0 2px 18px rgba(200, 80, 100, 0.25);
+}
+
+h3 {
+  font-family: "Great Vibes", cursive;
+  font-size: 2.4rem;
+  color: var(--deep-red);
+  margin-bottom: 12px;
+}
+
+.desc {
+  max-width: 48ch;
+  margin: 8px auto 24px;
+  font-weight: 300;
+  line-height: 1.65;
+  opacity: 0.82;
+}
+
+/* ===== Puzzle slots ===== */
+.slots {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+
+.slot {
+  width: 54px;
+  height: 58px;
+  border: 2px dashed rgba(212, 160, 85, 0.35);
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--cream);
+  transition: border-color 200ms, background 200ms, transform 200ms;
+}
+
+.slot.filled {
+  border-color: var(--dusty-rose);
+  background: rgba(196, 92, 106, 0.15);
+  transform: scale(1.05);
+}
+
+/* ===== Letter tiles ===== */
+.tiles {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.tile {
+  width: 58px;
+  height: 58px;
+  border: 1px solid var(--gold-dim);
+  border-radius: 12px;
+  background: rgba(255, 235, 210, 0.06);
+  color: var(--cream);
+  font-size: 1.15rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 160ms ease, opacity 160ms ease, background 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.tile:hover {
+  transform: scale(1.08);
+  background: rgba(196, 92, 106, 0.2);
+  box-shadow: 0 0 14px rgba(196, 92, 106, 0.25);
+}
+
+.tile.used {
+  opacity: 0.25;
+  pointer-events: none;
+  transform: scale(0.9);
+}
+
+/* ===== Buttons ===== */
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  border: none;
+  border-radius: 999px;
+  padding: 13px 30px;
+  font-family: "Special Elite", monospace;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: transform 160ms ease, filter 160ms ease, box-shadow 160ms ease;
+}
+
+.btn.primary {
+  background: linear-gradient(135deg, var(--vintage-red), var(--deep-red));
+  color: var(--cream);
+  box-shadow: 0 8px 28px rgba(140, 16, 40, 0.45);
+}
+
+.btn.primary:hover {
+  transform: translateY(-2px) scale(1.03);
+  filter: brightness(1.12);
+}
+
+.btn.primary:active {
+  transform: scale(0.97);
+}
+
+.btn.outline {
+  background: rgba(255, 235, 215, 0.08);
+  color: var(--blush);
+  border: 1px solid var(--gold-dim);
+  box-shadow: none;
+}
+
+.btn.outline:hover {
+  background: rgba(255, 235, 215, 0.16);
+}
+
+.feedback {
+  min-height: 22px;
+  margin-top: 14px;
+  font-size: 0.88rem;
+  font-weight: 500;
+}
+
+.feedback.error {
+  color: var(--blush);
+}
+
+.feedback.success {
+  color: #b8e6c4;
+}
+
+/* ===== Envelope open animation ===== */
+.envelope-scene {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.envelope {
+  position: relative;
+  width: 220px;
+  height: 150px;
+  perspective: 600px;
+}
+
+.env-back {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(145deg, #e8c9ac, #d4a87a);
+  border-radius: 6px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+
+.env-front {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 65%;
+  background: linear-gradient(180deg, #f0d5b8, #e2c09a);
+  border-radius: 0 0 6px 6px;
+  z-index: 3;
+}
+
+.env-flap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 55%;
+  background: linear-gradient(180deg, #dbb68e, #e8c9ac);
+  clip-path: polygon(0 0, 50% 100%, 100% 0);
+  transform-origin: top center;
+  z-index: 4;
+  transition: transform 800ms ease;
+}
+
+.envelope.open .env-flap {
+  transform: rotateX(180deg);
+}
+
+.env-letter {
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  top: 15%;
+  height: 70%;
+  background: #fff8f0;
+  border-radius: 4px;
+  display: grid;
+  place-items: center;
+  z-index: 2;
+  transform: translateY(0);
+  transition: transform 700ms ease 500ms;
+}
+
+.envelope.open .env-letter {
+  transform: translateY(-80px);
+}
+
+.env-letter p {
+  font-family: "Great Vibes", cursive;
+  font-size: 1.1rem;
+  color: var(--deep-red);
+}
+
+.env-hint {
+  font-family: "Special Elite", monospace;
+  font-size: 0.9rem;
+  color: var(--gold);
+  opacity: 0;
+  transition: opacity 400ms ease 400ms;
+}
+
+.phase.active .env-hint {
+  opacity: 1;
+}
+
+/* ===== Heart fill stage ===== */
+.heart-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+#heart-canvas {
+  width: min(400px, 82vw);
+  height: min(400px, 82vw);
+}
+
+.fill-label {
+  font-family: "Great Vibes", cursive;
+  font-size: clamp(1.4rem, 4vw, 2rem);
+  color: var(--blush);
+  opacity: 0;
+  transition: opacity 500ms ease;
+  text-shadow: 0 2px 12px rgba(200, 80, 100, 0.2);
+}
+
+.fill-label.visible {
+  opacity: 1;
+}
+
+/* ===== Message phase ===== */
+.msg-card {
+  padding-bottom: 34px;
+}
+
+.love-text {
+  max-width: 50ch;
+  margin: 12px auto 26px;
+  line-height: 1.75;
+  font-weight: 300;
+  min-height: 80px;
+}
+
+/* ===== Reasons I Love You ticker ===== */
+.ticker-wrap {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+  height: 38px;
+  background: rgba(30, 8, 14, 0.65);
+  backdrop-filter: blur(6px);
+  border-top: 1px solid var(--gold-dim);
+  z-index: 2;
+}
+
+.ticker {
+  display: flex;
+  gap: 48px;
+  white-space: nowrap;
+  animation: scroll-ticker 28s linear infinite;
+  padding-top: 9px;
+  font-family: "Special Elite", monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  color: var(--gold);
+}
+
+.ticker span {
+  flex-shrink: 0;
+}
+
+.ticker span::before {
+  content: "♥ ";
+  color: var(--dusty-rose);
+}
+
+@keyframes scroll-ticker {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* ===== Modal / Love letter ===== */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  place-items: center;
+  background: rgba(16, 4, 8, 0.78);
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 350ms ease;
+  padding: 20px;
+}
+
+.modal.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.vintage-letter {
+  position: relative;
+  width: min(580px, 100%);
+  /* Aged paper look */
+  background: linear-gradient(170deg, #fdf5e6 0%, #f5e6cf 40%, #ede0c8 100%);
+  color: #3a1a10;
+  border-radius: 6px;
+  padding: 36px 30px 28px;
+  box-shadow: var(--shadow), 0 0 0 1px rgba(160, 120, 70, 0.3);
+  text-align: left;
+  transform: translateY(16px) scale(0.97);
+  transition: transform 380ms ease;
+  /* Subtle aged edges */
+  border: 1px solid rgba(180, 140, 90, 0.5);
+}
+
+.modal.open .vintage-letter {
+  transform: translateY(0) scale(1);
+}
+
+.vintage-letter p {
+  font-family: "Poppins", sans-serif;
+  line-height: 1.75;
+  margin: 10px 0;
+  font-size: 0.95rem;
+}
+
+.sign {
+  margin-top: 18px;
+  font-family: "Great Vibes", cursive;
+  font-size: 2.1rem;
+  color: var(--deep-red);
+}
+
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  border: none;
+  background: transparent;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #88503e;
+  line-height: 1;
+}
+
+/* Wax seal */
+.wax-seal {
+  position: absolute;
+  top: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 48px;
+  height: 48px;
+  background: radial-gradient(circle at 40% 38%, #d42040, #8c1028);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: #ffeedd;
+  font-size: 1.3rem;
+  box-shadow: 0 4px 14px rgba(100, 10, 20, 0.5),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Postmark */
+.postmark {
+  position: absolute;
+  top: 18px;
+  right: 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 2px solid rgba(100, 60, 40, 0.3);
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  justify-content: center;
+  transform: rotate(-14deg);
+  opacity: 0.35;
+}
+
+.postmark span {
+  font-family: "Special Elite", monospace;
+  font-size: 0.5rem;
+  color: #5a3020;
+  line-height: 1.3;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ===== Burst particles ===== */
+.burst {
+  position: fixed;
+  pointer-events: none;
+  z-index: 5;
+  font-size: 1.2rem;
+  animation: burst-fly 1400ms ease forwards;
+}
+
+@keyframes burst-fly {
+  0% {
+    transform: translate(0, 0) scale(0.5);
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--dx), var(--dy)) scale(1.6) rotate(20deg);
+    opacity: 0;
+  }
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 500px) {
+  .vintage-card {
+    padding: 34px 18px 28px;
+  }
+
+  .slot {
+    width: 44px;
+    height: 48px;
+    font-size: 1.1rem;
+  }
+
+  .tile {
+    width: 48px;
+    height: 48px;
+    font-size: 1rem;
+  }
+
+  .stamp {
+    width: 40px;
+    height: 50px;
+    top: 10px;
+    right: 12px;
+  }
+
+  .stamp-heart {
+    font-size: 1.1rem;
+  }
+
+  .postmark {
+    width: 60px;
+    height: 60px;
+  }
+}
