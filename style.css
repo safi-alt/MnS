@@ -650,6 +650,7 @@ h3 {
   justify-content: center;
   transform: rotate(-14deg);
   opacity: 0.35;
+  pointer-events: none;
 }
 
 .postmark span {
