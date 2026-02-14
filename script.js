@@ -521,19 +521,20 @@ let seekedOnce = false;
 
 // Try to pre-seek on desktop (works on Chrome/Firefox, ignored on iOS Safari)
 song.addEventListener("loadedmetadata", () => {
-  try {
-    song.currentTime = SONG_START;
-  } catch (_) {}
+  try { song.currentTime = SONG_START; } catch (_) {}
 });
 
-// Once playback actually starts, force seek if still at the beginning
-// This is the iOS Safari fix — currentTime only works after play() on iOS
-song.addEventListener("playing", () => {
+// Aggressive iOS Safari fix: timeupdate fires repeatedly during playback,
+// so we keep forcing the seek until it actually sticks
+function onTimeUpdate() {
   if (!seekedOnce && song.currentTime < SONG_START - 1) {
     song.currentTime = SONG_START;
+  } else if (song.currentTime >= SONG_START - 1) {
     seekedOnce = true;
+    song.removeEventListener("timeupdate", onTimeUpdate);
   }
-});
+}
+song.addEventListener("timeupdate", onTimeUpdate);
 
 // When the song ends, loop back to 2:50
 song.addEventListener("ended", () => {
