@@ -235,9 +235,12 @@ function typeMessage(text) {
   }, 30);
 }
 
+const musicWidget = document.getElementById("music-widget");
+
 letterBtn.addEventListener("click", () => {
   letterModal.classList.add("open");
   letterModal.setAttribute("aria-hidden", "false");
+  musicWidget.classList.add("hidden");
   burstHearts(18);
 });
 
@@ -251,6 +254,7 @@ function closeModalFn() {
   if (document.activeElement) document.activeElement.blur();
   letterModal.classList.remove("open");
   letterModal.setAttribute("aria-hidden", "true");
+  musicWidget.classList.remove("hidden");
 }
 
 // ─── Reasons ticker ─────────────────────────────────────────

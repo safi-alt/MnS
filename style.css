@@ -525,6 +525,12 @@ h3 {
   pointer-events: auto;
 }
 
+/* Hide music widget when letter modal is open */
+.music-widget.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
 .vintage-letter {
   position: relative;
   width: min(580px, 100%);
@@ -695,6 +701,7 @@ h3 {
   flex-direction: column;
   align-items: center;
   gap: 6px;
+  transition: opacity 300ms ease;
 }
 
 .music-btn {
